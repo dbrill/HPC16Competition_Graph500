@@ -3,7 +3,7 @@ Graph500 implementation for cluster competition(s)
 
 
 # relevant sources
-[Reference given by graph500]
+[Reference given by graph500](www.graph500.org)
 
 [More fleshed out description of graph500 and competition requirements](https://github.com/buhpc/isc16-graph500)
 
