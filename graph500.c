@@ -1,9 +1,5 @@
 /* -*- mode: C; mode: folding; fill-column: 70; -*- */
-<<<<<<< HEAD
 /* Copyright 2010-2011,  Georgia Institute of Technology, USA. */
-=======
-/* Copyright 2010,  Georgia Institute of Technology, USA. */
->>>>>>> 90e6948d2d92ac90a5a2f393f8ab67b7620fe346
 /* See COPYING for license. */
 #include "compat.h"
 #include <stdio.h>
@@ -83,10 +79,6 @@ main (int argc, char **argv)
     the following if () {} else {} with a statement pointing IJ
     to wherever the edge list is mapped into the simulator's memory.
   */
-<<<<<<< HEAD
-	
-=======
->>>>>>> 90e6948d2d92ac90a5a2f393f8ab67b7620fe346
   if (!dumpname) {
     if (VERBOSE) fprintf (stderr, "Generating edge list...");
     if (use_RMAT) {
@@ -127,11 +119,7 @@ run_bfs (void)
 {
   int * restrict has_adj;
   int m, err;
-<<<<<<< HEAD
   int64_t k, t, nvtx_connected = 0;
-=======
-  int64_t k, t;
->>>>>>> 90e6948d2d92ac90a5a2f393f8ab67b7620fe346
 
   if (VERBOSE) fprintf (stderr, "Creating graph...");
   TIME(construction_time, err = create_graph_from_edgelist (IJ, nedge));
@@ -159,7 +147,6 @@ run_bfs (void)
 	  if (i != j)
 	    has_adj[i] = has_adj[j] = 1;
 	}
-<<<<<<< HEAD
       OMP("omp for reduction(+:nvtx_connected)")
 	for (k = 0; k < nvtx_scale; ++k)
 	  if (has_adj[k]) ++nvtx_connected;
@@ -177,19 +164,6 @@ run_bfs (void)
       }
     }
     if (t >= nvtx_connected && m < NBFS) {
-=======
-    }
-
-    /* Sample from {0, ..., nvtx_scale-1} without replacement. */
-    m = 0;
-    t = 0;
-    while (m < NBFS && t < nvtx_scale) {
-      double R = mrg_get_double_orig (prng_state);
-      if (!has_adj[t] || (nvtx_scale - t)*R > NBFS - m) ++t;
-      else bfs_root[m++] = t++;
-    }
-    if (t >= nvtx_scale && m < NBFS) {
->>>>>>> 90e6948d2d92ac90a5a2f393f8ab67b7620fe346
       if (m > 0) {
 	fprintf (stderr, "Cannot find %d sample roots of non-self degree > 0, using %d.\n",
 		 NBFS, m);
@@ -232,7 +206,6 @@ run_bfs (void)
       abort ();
     }
 
-<<<<<<< HEAD
     if (!getenv("SKIP_VALIDATION")) {
       if (VERBOSE) fprintf (stderr, "Verifying bfs %d...", m);
       bfs_nedge[m] = verify_bfs_tree (bfs_tree, max_bfsvtx, bfs_root[m], IJ, nedge);
@@ -242,15 +215,6 @@ run_bfs (void)
 		 m, bfs_root[m], bfs_nedge[m]);
 	abort ();
       }
-=======
-    if (VERBOSE) fprintf (stderr, "Verifying bfs %d...", m);
-    bfs_nedge[m] = verify_bfs_tree (bfs_tree, max_bfsvtx, bfs_root[m], IJ, nedge);
-    if (VERBOSE) fprintf (stderr, "done\n");
-    if (bfs_nedge[m] < 0) {
-      fprintf (stderr, "bfs %d from %" PRId64 " failed verification (%" PRId64 ")\n",
-	       m, bfs_root[m], bfs_nedge[m]);
-      abort ();
->>>>>>> 90e6948d2d92ac90a5a2f393f8ab67b7620fe346
     }
 
     xfree_large (bfs_tree);
