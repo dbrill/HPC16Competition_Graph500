@@ -15,10 +15,10 @@
 static int64_t maxvtx, maxdeg, nIJ;
 static const struct packed_edge * restrict IJ;
 static int64_t * restrict head, * restrict deg, * restrict next;
-
 int
 create_graph_from_edgelist (struct packed_edge *IJ_in, int64_t nedge)
 {
+
   int err = 0;
 
   IJ = IJ_in;
@@ -33,6 +33,7 @@ create_graph_from_edgelist (struct packed_edge *IJ_in, int64_t nedge)
       maxvtx = get_v0_from_edge(&IJ[k]);
     if (get_v1_from_edge(&IJ[k]) > maxvtx)
       maxvtx = get_v1_from_edge(&IJ[k]);
+
   }
 
   head = malloc ((2*(maxvtx+1) + 2*nIJ) * sizeof (int64_t));
@@ -48,6 +49,8 @@ create_graph_from_edgelist (struct packed_edge *IJ_in, int64_t nedge)
   for (k = 0; k < nedge; ++k) {
     const int64_t i = get_v0_from_edge(&IJ[k]);
     const int64_t j = get_v1_from_edge(&IJ[k]);
+//    printf("edge%d = %d<-->%d\t", k,i,j);
+
     int64_t t_head, t;
 
     if (i >= 0 && j >= 0 && i != j) {
@@ -73,6 +76,16 @@ create_graph_from_edgelist (struct packed_edge *IJ_in, int64_t nedge)
     if (deg[kg] > maxdeg)
       maxdeg = deg[kg];
 
+
+    //  printf("\nHEAD SEQ\n");
+    /*  int64_t t;
+      for(t=0; t < maxvtx+1; t++){
+        if (head[t] < 0)
+          continue;
+        else
+          printf("Vertex:%d, Value:%d, Depth:%d\n", t, head[t], deg[t]);
+      } */
+
   return err;
 }
 
@@ -80,6 +93,8 @@ int
 make_bfs_tree (int64_t *bfs_tree_out, int64_t *max_vtx_out,
 	       int64_t srcvtx)
 {
+
+
   int64_t * restrict bfs_tree = bfs_tree_out;
   int err = 0;
   const int64_t nv = maxvtx+1;
@@ -103,24 +118,35 @@ make_bfs_tree (int64_t *bfs_tree_out, int64_t *max_vtx_out,
     bfs_tree[k] = -1;
   for (k = srcvtx+1; k < nv; ++k)
     bfs_tree[k] = -1;
-
+int64_t count = 0;
   while (k1 != k2) {
     int64_t k, newk2 = k2;
+    count++;
+  //  printf("\nVLIST for k%d and count is: %d and newk2: %d\n", k1, count, newk2);
     for (k = k1; k < k2; ++k) {
       const int64_t parent = vlist[k];
       int64_t p = head[parent];
       while (p >= 0) {
-	const int64_t newv = ((p % 2) ? get_v1_from_edge(&IJ[p / 2]) : get_v0_from_edge(&IJ[p / 2]));
-  //if there's no vertex in that spot
-	if (bfs_tree[newv] < 0) {
-	  bfs_tree[newv] = parent;
-	  vlist[newk2++] = newv;
-	}
-	p = next[p];
+      	const int64_t newv = ((p % 2) ? get_v1_from_edge(&IJ[p / 2]) : get_v0_from_edge(&IJ[p / 2]));
+        //if there's no vertex in that spot
+      	if (bfs_tree[newv] < 0) {
+      	  bfs_tree[newv] = parent;
+      	  vlist[newk2++] = newv;
+      	}
+      	p = next[p];
       }
       k1 = k2;
       k2 = newk2;
+    //  printf("K2: %d\n", k2);
     }
+/*    int64_t t, v;
+    for(t=0; t < 256; t++){
+      v = vlist[t];
+  		if (v < 0)
+  			continue;
+  		else
+  			printf("Vlist:%d, Value:%d\n", t, v);
+  	} */
   }
   free (vlist);
 
