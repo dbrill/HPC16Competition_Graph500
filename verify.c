@@ -1,9 +1,5 @@
 /* -*- mode: C; mode: folding; fill-column: 70; -*- */
-<<<<<<< HEAD
 /* Copyright 2010-2011,  Georgia Institute of Technology, USA. */
-=======
-/* Copyright 2010,  Georgia Institute of Technology, USA. */
->>>>>>> 90e6948d2d92ac90a5a2f393f8ab67b7620fe346
 /* See COPYING for license. */
 #include "compat.h"
 #include <stdio.h>
@@ -16,10 +12,7 @@
 #include <assert.h>
 
 #include "xalloc.h"
-<<<<<<< HEAD
 #include "verify.h"
-=======
->>>>>>> 90e6948d2d92ac90a5a2f393f8ab67b7620fe346
 
 static int
 compute_levels (int64_t * level,
@@ -86,7 +79,6 @@ compute_levels (int64_t * level,
 int64_t
 verify_bfs_tree (int64_t *bfs_tree_in, int64_t max_bfsvtx,
 		 int64_t root,
-<<<<<<< HEAD
 		 const struct packed_edge *IJ_in, int64_t nedge)
 {
   int64_t * restrict bfs_tree = bfs_tree_in;
@@ -94,14 +86,6 @@ verify_bfs_tree (int64_t *bfs_tree_in, int64_t max_bfsvtx,
 
   int err;
   int64_t nedge_traversed;
-=======
-		 const int64_t *IJ_in, int64_t nedge)
-{
-  int64_t * restrict bfs_tree = bfs_tree_in;
-  const int64_t * restrict IJ = IJ_in;
-
-  int err, nedge_traversed;
->>>>>>> 90e6948d2d92ac90a5a2f393f8ab67b7620fe346
   int64_t * restrict seen_edge, * restrict level;
 
   const int64_t nv = max_bfsvtx+1;
@@ -132,15 +116,9 @@ verify_bfs_tree (int64_t *bfs_tree_in, int64_t max_bfsvtx,
 
     OMP("omp for reduction(+:nedge_traversed)")
     MTA("mta assert parallel") MTA("mta use 100 streams")
-<<<<<<< HEAD
       for (k = 0; k < nedge; ++k) {
 	const int64_t i = get_v0_from_edge (&IJ[k]);
 	const int64_t j = get_v1_from_edge (&IJ[k]);
-=======
-      for (k = 0; k < 2*nedge; k+=2) {
-	const int64_t i = IJ[k];
-	const int64_t j = IJ[k+1];
->>>>>>> 90e6948d2d92ac90a5a2f393f8ab67b7620fe346
 	int64_t lvldiff;
 	terr = err;
 
@@ -159,7 +137,6 @@ verify_bfs_tree (int64_t *bfs_tree_in, int64_t max_bfsvtx,
 	  continue;
 
 	/* Both i and j are in the tree, count as a traversed edge.
-
 	   NOTE: This counts self-edges and repeated edges.  They're
 	   part of the input data.
 	*/
