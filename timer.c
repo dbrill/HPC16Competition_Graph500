@@ -1,5 +1,9 @@
 /* -*- mode: C; mode: folding; fill-column: 70; -*- */
+<<<<<<< HEAD
 /* Copyright 2010-2011,  Georgia Institute of Technology, USA. */
+=======
+/* Copyright 2010,  Georgia Institute of Technology, USA. */
+>>>>>>> 90e6948d2d92ac90a5a2f393f8ab67b7620fe346
 /* See COPYING for license. */
 #include "compat.h"
 #include <stdlib.h>
@@ -13,7 +17,11 @@
 #include <sys/mta_task.h>
 long tic_ts;
 #elif defined(__MacOSX__)
+<<<<<<< HEAD
 static tic_ts;
+=======
+static AbsoluteTime tic_ts;
+>>>>>>> 90e6948d2d92ac90a5a2f393f8ab67b7620fe346
 #elif defined(HAVE_MACH_ABSOLUTE_TIME)
 #include <mach/mach_time.h>
 static uint64_t tic_ts;
@@ -38,7 +46,11 @@ tic (void)
   MTA("mta fence")
   tic_ts = mta_get_clock (0);
 #elif defined(HAVE_MACH_ABSOLUTE_TIME)
+<<<<<<< HEAD
   tic_ts = mach_absolute_time();
+=======
+  tic_ts = mach_absolute_time();  
+>>>>>>> 90e6948d2d92ac90a5a2f393f8ab67b7620fe346
 #else
   clock_gettime (TICTOC_CLOCK, &tic_ts);
 #endif
