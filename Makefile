@@ -3,7 +3,7 @@
 # See COPYING for license.
 BUILD_OPENMP = No
 BUILD_XMT = No
-include make.inc
+include makeSeq.inc
 
 GRAPH500_SOURCES=graph500.c options.c rmat.c kronecker.c verify.c prng.c \
 	xalloc.c timer.c 
@@ -34,7 +34,9 @@ all: $(BIN)
 
 CPPFLAGS += -I./generator
 
-make-edgelist: CFLAGS:=$(CFLAGS) $(CFLAGS_OPENMP)
+
+#make-edgelist: CFLAGS:=$(CFLAGS) $(CFLAGS_OPENMP)
+make-edgelist: CFLAGS:=$(CFLAGS) 
 make-edgelist:	make-edgelist.c options.c rmat.c kronecker.c prng.c \
 	xalloc.c timer.c $(addprefix generator/,$(GENERATOR_SRCS))
 
@@ -64,10 +66,12 @@ generator/generator_test_seq: generator/generator_test_seq.c $(GENERATOR_SRCS)
 generator/generator_test_omp: generator/generator_test_omp.c $(GENERATOR_SRCS)
 
 mpi/graph500_mpi_simple mpi/graph500_mpi_one_sided mpi/graph500_mpi_replicated:
-	$(MAKE) -C mpi
+	$(MAKE)         # -C mpi
+
+
 
 .PHONY:	clean
 clean:
-	rm -f generator/generator_test_seq generator/generator_test_omp \
+	rm -rf generator/generator_test_seq generator/generator_test_omp \
 		$(BIN)
 	-$(MAKE) -C mpi clean

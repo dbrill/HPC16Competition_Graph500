@@ -79,6 +79,7 @@ main (int argc, char **argv)
     the following if () {} else {} with a statement pointing IJ
     to wherever the edge list is mapped into the simulator's memory.
   */
+	
   if (!dumpname) {
     if (VERBOSE) fprintf (stderr, "Generating edge list...");
     if (use_RMAT) {

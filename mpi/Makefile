@@ -1,6 +1,6 @@
-CFLAGS = -fopenmp -g -Wall -Drestrict=__restrict__ -O3 -DNDEBUG -ffast-math -DGRAPH_GENERATOR_MPI # -g -pg
-# CFLAGS = -g -Wall -Drestrict= -DGRAPH_GENERATOR_MPI
-LDFLAGS = -fopenmp -g # -g -pg
+#CFLAGS = -fopenmp -g -Wall -Drestrict=__restrict__ -O3 -DNDEBUG -ffast-math -DGRAPH_GENERATOR_MPI # -g -pg
+CFLAGS = -g -Wall -Drestrict= -DGRAPH_GENERATOR_MPI
+#LDFLAGS = -fopenmp -g # -g -pg
 MPICC = mpicc
 
 all: graph500_mpi_simple graph500_mpi_one_sided graph500_mpi_replicated graph500_mpi_replicated_csc graph500_mpi_custom
@@ -25,4 +25,4 @@ graph500_mpi_custom: bfs_custom.c $(SOURCES) $(HEADERS) $(GENERATOR_SOURCES)
 	$(MPICC) $(CFLAGS) $(LDFLAGS) -o graph500_mpi_custom bfs_custom.c $(SOURCES) $(GENERATOR_SOURCES) -lm
 
 clean:
-	-rm -f graph500_mpi_* *.o *.a
+	-rm -rf graph500_mpi_* *.o *.a

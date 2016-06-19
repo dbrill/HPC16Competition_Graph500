@@ -30,6 +30,7 @@ static int* g_outgoing_reqs_active;
 static int64_t* g_recvbuf;
 
 void make_graph_data_structure(const tuple_graph* const tg) {
+  //makes the tuple graph into a one directional compressed sparce row graph
   convert_graph_to_oned_csr(tg, &g);
   const size_t nlocalverts = g.nlocalverts;
   g_oldq = (int64_t*)xmalloc(nlocalverts * sizeof(int64_t));
@@ -162,7 +163,7 @@ void run_bfs(int64_t root, int64_t* pred) {
   while (1) {
     memset(outgoing_counts, 0, size * sizeof(size_t));
     num_ranks_done = 1; /* I never send to myself, so I'm always done */
-    
+
     /* Start the initial receive. */
     if (num_ranks_done < size) {
       MPI_Irecv(recvbuf, coalescing_size * 2, MPI_INT64_T, MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, &recvreq);
@@ -178,7 +179,10 @@ void run_bfs(int64_t root, int64_t* pred) {
       int64_t src = oldq[i];
       /* Iterate through its incident edges. */
       size_t j, j_end = g.rowstarts[VERTEX_LOCAL(oldq[i]) + 1];
+      //so iterate through all elements in the row j, stop when you get to
+      //the next rowstart
       for (j = g.rowstarts[VERTEX_LOCAL(oldq[i])]; j < j_end; ++j) {
+        //we have the row that j is in and this will give us the column aka position
         int64_t tgt = g.column[j];
         int owner = VERTEX_OWNER(tgt);
         /* If the other endpoint is mine, update the visited map, predecessor

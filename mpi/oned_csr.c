@@ -20,8 +20,8 @@
 #include <assert.h>
 
 typedef struct temp_csr_graph {
-  size_t* restrict rowstarts;
-  int64_t* restrict column;
+  size_t* restrict rowstarts; //this array contains the elements of the vertices array that begin a row
+  int64_t* restrict column; //this array contains which column a vertice belongs to
   size_t nlocalverts;
   size_t nlocaledges;
   size_t nlocaledges_allocated; /* Actual size of column */
@@ -184,7 +184,7 @@ static void merge_csr(temp_csr_graph* restrict const b,
   free(graph_so_far.rowstarts); graph_so_far.rowstarts = NULL; \
   free(graph_so_far.column); graph_so_far.column = NULL; \
   graph_so_far.nlocalverts = graph_so_far.nlocaledges = graph_so_far.nlocaledges_allocated = 0;
-  
+
 static MAKE_REDISTRIBUTE_FUNC(CONV1D_FUNCNAME, CONV1D_EXTRA_PARAMS, CONV1D_DECLARE_AND_INIT_GRAPH_SO_FAR, CONV1D_CALL_ON_EDGES, CONV1D_EDGE_BUFFER_TYPE, CONV1D_EDGE_BUFFER_MPI_TYPE, CONV1D_PRECOMPRESS_INCOMING_DATA, CONV1D_MERGE_INTO_GRAPH_SO_FAR, CONV1D_FREE_PRECOMPRESSED_DATA, CONV1D_BUILD_FINAL_DATA_STRUCTURE_FROM_GRAPH_SO_FAR, CONV1D_CLEAR_GRAPH_SO_FAR)
 
 void convert_graph_to_oned_csr(const tuple_graph* const tg, oned_csr_graph* const g) { \
@@ -197,4 +197,3 @@ void free_oned_csr_graph(oned_csr_graph* const g) {
   if (g->rowstarts != NULL) {free(g->rowstarts); g->rowstarts = NULL;}
   if (g->column != NULL) {free(g->column); g->column = NULL;}
 }
-

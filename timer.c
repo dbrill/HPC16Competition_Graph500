@@ -13,7 +13,7 @@
 #include <sys/mta_task.h>
 long tic_ts;
 #elif defined(__MacOSX__)
-static AbsoluteTime tic_ts;
+static tic_ts;
 #elif defined(HAVE_MACH_ABSOLUTE_TIME)
 #include <mach/mach_time.h>
 static uint64_t tic_ts;
@@ -38,7 +38,7 @@ tic (void)
   MTA("mta fence")
   tic_ts = mta_get_clock (0);
 #elif defined(HAVE_MACH_ABSOLUTE_TIME)
-  tic_ts = mach_absolute_time();  
+  tic_ts = mach_absolute_time();
 #else
   clock_gettime (TICTOC_CLOCK, &tic_ts);
 #endif
