@@ -14,6 +14,8 @@
 #include "xalloc.h"
 #include "verify.h"
 
+static int64_t count = 0;
+
 static int
 compute_levels (int64_t * level,
 		int64_t nv, const int64_t * restrict bfs_tree, int64_t root)
@@ -109,6 +111,8 @@ verify_bfs_tree (int64_t *bfs_tree_in, int64_t max_bfsvtx,
 		 int64_t root,
 		 const struct packed_edge *IJ_in, int64_t nedge)
 {
+	count++;
+	//printf("***RUN NUMBER %d***", count);
   int64_t * restrict bfs_tree = bfs_tree_in;
   const struct packed_edge * restrict IJ = IJ_in;
 
@@ -136,7 +140,7 @@ verify_bfs_tree (int64_t *bfs_tree_in, int64_t max_bfsvtx,
   if (err) goto done;
 	int64_t z;
 	for(z = 0; z < nv; z++){
-		printf("bfs_tree[%d] = %d\n",z, bfs_tree[z]);
+		//printf("bfs_tree[%d] = %d\n",z, bfs_tree[z]);
 	}
 
   OMP("omp parallel shared(err)") {
@@ -151,7 +155,7 @@ verify_bfs_tree (int64_t *bfs_tree_in, int64_t max_bfsvtx,
       for (k = 0; k < nedge; ++k) {
 					const int64_t i = get_v0_from_edge (&IJ[k]);
 					const int64_t j = get_v1_from_edge (&IJ[k]);
-					printf("edge %d: %d<-->%d\n", k, i, j);
+				//	printf("edge %d: %d<-->%d\n", k, i, j);
 					int64_t lvldiff;
 					terr = err;
 
@@ -180,6 +184,9 @@ verify_bfs_tree (int64_t *bfs_tree_in, int64_t max_bfsvtx,
 					++nedge_traversed;
 					/* Mark seen tree edges. */
 					if (i != j) {
+					//  printf("bfs_tree[%d](i) = %d\n", i, bfs_tree[i]);
+						//printf("bfs_tree[%d](j) = %d\n", j, bfs_tree[j]);
+
 					  if (bfs_tree[i] == j)
 					    seen_edge[i] = 1;
 					  if (bfs_tree[j] == i)
@@ -200,9 +207,8 @@ verify_bfs_tree (int64_t *bfs_tree_in, int64_t max_bfsvtx,
 			  if (!terr && k != root) {
 			    if (bfs_tree[k] >= 0 && !seen_edge[k]){
 			      terr = -15;
-						printf("***root = %d bfs_tree[%d] = %d and seen_edge=%d***\n", root, k, bfs_tree[k],  seen_edge[k]);
-
-					} else 	printf("***root = %d bfs_tree[%d] = %d and seen_edge=%d***\n", root, k, bfs_tree[k],  seen_edge[k]);
+					//	printf("***root = %d bfs_tree[%d] = %d and seen_edge=%d***\n", root, k, bfs_tree[k],  seen_edge[k]);
+				} else 	//printf("***root = %d bfs_tree[%d] = %d and seen_edge=%d***\n", root, k, bfs_tree[k],  seen_edge[k]);
 			    if (bfs_tree[k] == k)
 			      terr = -16;
 			    if (terr) { err = terr; OMP("omp flush(err)"); }
