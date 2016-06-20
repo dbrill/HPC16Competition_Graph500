@@ -14,7 +14,7 @@
 #include "xalloc.h"
 #include "verify.h"
 
-static int64_t count = 0;
+//static int64_t count = 0;
 
 static int
 compute_levels (int64_t * level,
@@ -36,6 +36,7 @@ compute_levels (int64_t * level,
     OMP("omp for")
 				//0 - number_vertexes
       for (k = 0; k < nv; ++k)
+					//set level to 0 if it's the root otherwise set it to -1 or unvisited
 				level[k] = (k == root? 0 : -1);
 
     OMP("omp for") MTA("mta assert parallel") MTA("mta use 100 streams")
@@ -44,24 +45,29 @@ compute_levels (int64_t * level,
 					if (level[k] >= 0) continue;
 						//temp error val
 					terr = err;
-						//if no errors thus far, and verte is not edgeless and not root
+						//if no errors thus far, and vertex is not edgeless and not root
 					if (!terr && bfs_tree[k] >= 0 && k != root) {
 					  int64_t parent = k;
 					  int64_t nhop = 0;
 					  /* Run up the tree until we encounter an already-leveled vertex. */
-							//if parent still has an edge and has yet to be visited
+							//if parent still has an edge and hasn't had its level set yet
 							//and traversal < num_verts
 							//for loop to calculate the number of hops in the tree
 					  while (parent >= 0 && level[parent] < 0 && nhop < nv) {
-								//no cycle
+								//no cycle (self loops)
 					    assert (parent != bfs_tree[parent]);
-								//move parent down to next child
+								//move parent up to its child
 					    parent = bfs_tree[parent];
 								//increase number of moves
 					    ++nhop;
 					  }
 
+						//The below two ifs resulting in error are saying that the above
+						//while should be terminated by its middle condition if things are working
+
+						//if we hopped more times than there are nodes there must've been a cycle
 					  if (nhop >= nv) terr = -1; /* Cycle. */
+						//if we moved to a node where node->value == -1
 					  if (parent < 0) terr = -2; /* Ran off the end. */
 
 					  if (!terr) {
@@ -72,6 +78,7 @@ compute_levels (int64_t * level,
 							// reduce nhop by zero if parent is root
 							//reduce nhop by one if parent is not root
 					    nhop += level[parent];
+							//move parent back to where it was before adding to nhops
 					    parent = k;
 
 								//while loop to assign the level to nodes in the tree
@@ -111,7 +118,7 @@ verify_bfs_tree (int64_t *bfs_tree_in, int64_t max_bfsvtx,
 		 int64_t root,
 		 const struct packed_edge *IJ_in, int64_t nedge)
 {
-	count++;
+//	count++;
 	//printf("***RUN NUMBER %d***", count);
   int64_t * restrict bfs_tree = bfs_tree_in;
   const struct packed_edge * restrict IJ = IJ_in;
@@ -148,6 +155,7 @@ verify_bfs_tree (int64_t *bfs_tree_in, int64_t max_bfsvtx,
     int terr = 0;
     OMP("omp for")
       for (k = 0; k < nv; ++k)
+				//set all vertices to 0 (unseen)
 				seen_edge[k] = 0;
 
     OMP("omp for reduction(+:nedge_traversed)")

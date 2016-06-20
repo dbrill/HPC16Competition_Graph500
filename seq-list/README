@@ -1,0 +1,13 @@
+--to run issue command from /<path>/graph500/seqlist    cd .. && make clean && make && cd seq-list && ./seq-list
+
+Must be run with edgefactor and SCALE parameters resulting in nbfs = 64 (and possibly also 32) 
+	-- for instance SCALE=8 && edgefactor=8  results in nbfs = 56 and the graph breaks due to an illogical cycle
+
+	Our algorithm removes the sequentially ordered arrays, "head" and "deg", by creating a struct vertex with attributes "value" and "depth"
+This forces the degree associated with a node in the graph to fall adjacent to its vertex. There is no guaruntee that adjacent vertices in the 
+original "head" array will be accessed sequentially, with this understanding it is less desirable to store each vertex continguously. It would be far more advantageous to store each vertex directly next to its associated degree knowing that the two values will be accessed within some relative number of clock cycles from one another.
+
+	Consider the graph in which vertex 1 has some relationship arbitrary of degree of parenthood to every other node from node 1 to node n in reverse order (1-->n-->n-1-->n-2-->...)
+Despite vertices 0 and 1 being stored next to each other in the "head" array there are very few situations in which they are accessed sequentially. Therefore, knowing that,
+regardless of tree structure, we are constantly accessing a vertex followed by its depth and vice versa we can ensure beneficial cache locality by creating a struct that
+forces nodes and depths to be stored sequentially ([node_0, depth_0, node_1, depth_1, node_2, depth_2, ....., node_n-1, depth_n-1]). 

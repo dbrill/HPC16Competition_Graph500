@@ -1,0 +1,3 @@
+edgefactor: 20
+median_time: 3.00677236500000000e-01
+median_TEPS: 4.33891573358009011e+06
