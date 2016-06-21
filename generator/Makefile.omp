@@ -7,6 +7,8 @@ GENERATOR_HEADERS = graph_generator.h make_graph.h mod_arith_32bit.h mod_arith_6
 
 all: generator_test_omp
 
+#generator_test_omp: generator_test_omp.c $(GENERATOR_SOURCES) $(GENERATOR_HEADERS)
+#	$(CC) $(CFLAGS) $(LDFLAGS) -o generator_test_omp generator_test_omp.c $(GENERATOR_SOURCES) -lm
 generator_test_omp: generator_test_omp.c $(GENERATOR_SOURCES) $(GENERATOR_HEADERS)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o generator_test_omp generator_test_omp.c $(GENERATOR_SOURCES) -lm
 

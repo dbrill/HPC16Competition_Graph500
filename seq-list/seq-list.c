@@ -17,18 +17,20 @@ static const struct packed_edge * restrict IJ;
 static int64_t * restrict head, * restrict next;
 //static int64_t  * restrict deg;
 
+//each node is represented by a "vertex" sruct associating node values with
+//their depths. This ensures memory locality between nodes and their depths
+//i.e. [node0, depth0, node1, depth1, node2, depth2]
 struct vertex {
   int64_t value;
   int64_t depth;
 };
-static int64_t count = 0;
 int
 create_graph_from_edgelist (struct packed_edge *IJ_in, int64_t nedge)
 {
 
   int err = 0;
 
-  IJ = IJ_in; //edgelist single-D array
+  IJ = IJ_in; //edgelist single-D array  edge_1 <--> edge_2 ()
   nIJ = nedge; // number of edges
   maxvtx = -1; //max vertex
   maxdeg = -1; //max depth
@@ -37,10 +39,10 @@ create_graph_from_edgelist (struct packed_edge *IJ_in, int64_t nedge)
   int64_t k;
   for (k = 0; k < nedge; ++k) {
         //THIS MIGHT BE WRONG. IMAGINE BOTH ARE LARGER AND V1 < V0
-    if (get_v0_from_edge(&IJ[k]) > maxvtx)
-      maxvtx = get_v0_from_edge(&IJ[k]);
     if (get_v1_from_edge(&IJ[k]) > maxvtx)
-      maxvtx = get_v1_from_edge(&IJ[k]);
+        maxvtx = get_v1_from_edge(&IJ[k]);
+    else if (get_v0_from_edge(&IJ[k]) > maxvtx)
+      maxvtx = get_v0_from_edge(&IJ[k]);
   }
     //size accounts for undirectedness meaning two "edge_entries" for each connection
     //we're mallocing with the sizeof(our struct) now for efficiency and performance and optimization
@@ -138,10 +140,6 @@ int
 make_bfs_tree (int64_t *bfs_tree_out, int64_t *max_vtx_out,
 	       int64_t srcvtx)
 {
-  //printf("******COUNT: %d*****", count);
-//  printf("Variables-----\nsrcvtx:%d, head[0]:%d, head[1]:%d\n", srcvtx, head[0], head[1]);
-//printf("Variables-----\nsrcvtx:%d, head[2]:%d, head[3]:%d\n", srcvtx, head[2], head[3]);
-  count++;
   int64_t * restrict bfs_tree = bfs_tree_out;
   int err = 0;
 

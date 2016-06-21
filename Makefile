@@ -35,8 +35,8 @@ all: $(BIN)
 CPPFLAGS += -I./generator
 
 
-#make-edgelist: CFLAGS:=$(CFLAGS) $(CFLAGS_OPENMP)
-make-edgelist: CFLAGS:=$(CFLAGS) 
+make-edgelist: CFLAGS:=$(CFLAGS) $(CFLAGS_OPENMP)
+#make-edgelist: CFLAGS:=$(CFLAGS) 
 make-edgelist:	make-edgelist.c options.c rmat.c kronecker.c prng.c \
 	xalloc.c timer.c $(addprefix generator/,$(GENERATOR_SRCS))
 
